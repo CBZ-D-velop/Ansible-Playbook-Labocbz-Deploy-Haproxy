@@ -91,6 +91,11 @@ Here you can put your change to keep a trace of your work and decisions.
 
 * First init of this playbook with the bootstrap_playbook playbook by Lord Robin Crombez
 
+### 2023-10-15-b first deployment
+
+* Playbook hanlde install of HAProxy
+* Playbook handle install of Apache2 as frontal reverse proxy
+
 ## Authors
 
 * Lord Robin Crombez
