@@ -1,0 +1,145 @@
+---
+- name: "labocbz.deploy_haproxy"
+  hosts: "all"
+  gather_facts: true
+  remote_user: root
+  strategy: free
+  become: true
+  become_method: sudo
+  become_user: root
+  tags:
+    - "labocbz.install_haproxy"
+
+  tasks:
+
+    - name: "Install HAProxy"
+      when: inv_install_haproxy| default(false)
+      block:
+        - name: "Include labocbz.prepare_host"
+          tags:
+            - "labocbz.prepare_host"
+          ansible.builtin.include_role:
+            name: "labocbz.prepare_host"
+
+        - name: "Include labocbz.add_certificates"
+          tags:
+            - "labocbz.add_certificates"
+          loop: "{{ inv_haproxy_cert_bundles }}"
+          loop_control:
+            loop_var: bundle
+          when: inv_haproxy_cert_bundles  is defined
+          vars:
+            add_certificates_bundle_name: "{{ bundle.name }}"
+            add_certificates_bundle_type: "{{ bundle.type }}"
+            add_certificates_bundle_src: "{{ bundle.src }}"
+            add_certificates_bundle_dest: "{{ bundle.dest }}"
+            add_certificates_bundle_src_user: "{{ bundle.src_user }}"
+            add_certificates_bundle_src_password: "{{ bundle.src_password }}"
+            add_certificates_bundle_dest_user: "{{ bundle.dest_user }}"
+            add_certificates_bundle_dest_group: "{{ bundle.dest_group }}"
+            add_certificates_bundle_dest_mode: "{{ bundle.dest_mode }}"
+          ansible.builtin.include_role:
+            name: "labocbz.add_certificates"
+
+        - name: "Include labocbz.install_haproxy"
+          tags:
+            - "labocbz.install_haproxy"
+          vars:
+            haproxy_path: "{{ inv_haproxy_path }}"
+            haproxy_confs_path: "{{ inv_haproxy_confs_path }}"
+            haproxy_error_path: "{{ inv_haproxy_error_path }}"
+            haproxy_ssl_path: "{{ inv_haproxy_ssl_path }}"
+            haproxy_error_files: "{{ inv_haproxy_error_files }}"
+            haproxy_listen_stats: "{{ inv_haproxy_listen_stats }}"
+            haproxy_listen_stats_port: "{{ inv_haproxy_listen_stats_port }}"
+            haproxy_listen_stats_uri: "{{ inv_haproxy_listen_stats_uri }}"
+            haproxy_stats_login: "{{ inv_haproxy_stats_login }}"
+            haproxy_stats_password: "{{ inv_haproxy_stats_password }}"
+            haproxy_listen_stats_https: "{{ inv_haproxy_listen_stats_https }}"
+            haproxy_listen_stats_cert: "{{ inv_haproxy_listen_stats_cert }}"
+            haproxy_listen_stats_key: "{{ inv_haproxy_listen_stats_key }}"
+            haproxy_listen_stats_bind: "{{ inv_haproxy_listen_stats_bind }}"
+          ansible.builtin.include_role:
+            name: "labocbz.install_haproxy"
+
+- name: "Install Apache2"
+  hosts: "{{ tower_env | default([]) }}"
+  gather_facts: true
+  remote_user: root
+  strategy: free
+  become: true
+  become_method: sudo
+  become_user: root
+  tags:
+    - "labocbz.install_apache"
+
+  tasks:
+
+    - name: "Install Apache2"
+      when: inv_install_apache | default(false)
+      block:
+        - name: "Include labocbz.prepare_host"
+          tags:
+            - "labocbz.prepare_host"
+          ansible.builtin.include_role:
+            name: "labocbz.prepare_host"
+
+        - name: "Include labocbz.add_certificates"
+          tags:
+            - "labocbz.add_certificates"
+          loop: "{{ inv_add_apache_confs_configurations_cert_bundles }}"
+          loop_control:
+            loop_var: bundle
+          when: inv_add_apache_confs_configurations_cert_bundles is defined
+          vars:
+            add_certificates_bundle_name: "{{ bundle.name }}"
+            add_certificates_bundle_type: "{{ bundle.type }}"
+            add_certificates_bundle_src: "{{ bundle.src }}"
+            add_certificates_bundle_dest: "{{ bundle.dest }}"
+            add_certificates_bundle_src_user: "{{ bundle.src_user }}"
+            add_certificates_bundle_src_password: "{{ bundle.src_password }}"
+            add_certificates_bundle_dest_user: "{{ bundle.dest_user }}"
+            add_certificates_bundle_dest_group: "{{ bundle.dest_group }}"
+            add_certificates_bundle_dest_mode: "{{ bundle.dest_mode }}"
+          ansible.builtin.include_role:
+            name: "labocbz.add_certificates"
+
+        - name: "Include labocbz.install_apache"
+          tags:
+            - "labocbz.install_apache"
+          vars:
+            install_apache_https_listen_port: "{{ inv_install_apache_https_listen_port }}"
+            install_apache_http_listen_port: "{{ inv_install_apache_http_listen_port }}"
+            install_apache_modules: "{{ inv_install_apache_modules }}"
+            install_apache_enable_qos: "{{ inv_install_apache_enable_qos }}"
+            install_apache_enable_security: "{{ inv_install_apache_enable_security }}"
+            install_apache_security_core_version: "{{ inv_install_apache_security_core_version }}"
+            install_apache_remove_all_vhosts: "{{ inv_install_apache_remove_all_vhosts }}"
+            install_apache_loglevel: "{{ inv_install_apache_loglevel }}"
+            install_apache_security_version: "{{ inv_install_apache_security_version }}"
+            install_apache_enable_evasive: "{{ inv_install_apache_enable_evasive }}"
+            install_apache_enable_pagespeed: "{{ inv_install_apache_enable_pagespeed }}"
+            install_apache_enable_prefork: "{{ inv_install_apache_enable_prefork }}"
+          ansible.builtin.include_role:
+            name: "labocbz.install_apache"
+
+        - name: "Include labocbz.add_apache_confs"
+          tags:
+            - "labocbz.add_apache_confs"
+          vars:
+            add_apache_confs_http_listen_port: "{{ inv_add_apache_confs_http_listen_port }}"
+            add_apache_confs_https_listen_port: "{{ inv_add_apache_confs_https_listen_port }}"
+            add_apache_confs_ldap_url: "{{ inv_add_apache_confs_ldap_url }}"
+            add_apache_confs_ldap_port: "{{ inv_add_apache_confs_ldap_port }}"
+            add_apache_confs_ldap_dc: "{{ inv_add_apache_confs_ldap_dc }}"
+            add_apache_confs_auth_ldap_url: "{{ inv_add_apache_confs_auth_ldap_url }}"
+            add_apache_confs_custom_ldap_base_header: "{{ inv_add_apache_confs_custom_ldap_base_header }}"
+            add_apache_confs_webmaster: "{{ inv_add_apache_confs_webmaster }}"
+            add_apache_confs_request_body: "{{ inv_add_apache_confs_request_body }}"
+            add_apache_confs_security_body_limit: "{{ inv_add_apache_confs_security_body_limit }}"
+            add_apache_confs_ssl_files_path: "{{ inv_add_apache_confs_ssl_files_path }}"
+            add_apache_confs_conf_path: "{{ inv_add_apache_confs_conf_path }}"
+            add_apache_confs_base_document_root: "{{ inv_add_apache_confs_base_document_root }}"
+            add_apache_confs_configurations: "{{ inv_add_apache_confs_configurations }}"
+          ansible.builtin.include_role:
+            name: "labocbz.add_apache_confs"

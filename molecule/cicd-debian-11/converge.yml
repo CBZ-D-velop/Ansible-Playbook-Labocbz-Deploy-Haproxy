@@ -1,0 +1,5 @@
+---
+- name: "Include labocbz.deploy_haproxy playbook"
+  tags:
+      - "labocbz.deploy_haproxy"
+  ansible.builtin.import_playbook: "../../playbook.yml"

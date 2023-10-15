@@ -1,0 +1,28 @@
+---
+- name: "labocbz.prepare_host"
+  src: "https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Prepare-Host.git"
+  version: "2.0"
+
+- name: "labocbz.add_certificates"
+  src: "https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Add-Certificates.git"
+  version: "2.0"
+
+- name: "labocbz.install_haproxy"
+  src: "https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Install-Haproxy.git"
+  version: "2.0"
+
+- name: "labocbz.add_haproxy_http_confs"
+  src: "https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Add-Haproxy-HTTP-Confs.git"
+  version: "2.0"
+
+- name: "labocbz.add_haproxy_bdd_confs"
+  src: "https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Add-Haproxy-BDD-Confs.git"
+  version: "2.0"
+
+- name: "labocbz.install_apache"
+  src: "https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Install-Apache.git"
+  version: "3.0"
+
+- name: "labocbz.add_apache_confs"
+  src: "https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Add-Apache-Confs.git"
+  version: "3.0"
