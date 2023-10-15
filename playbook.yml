@@ -1,5 +1,5 @@
 ---
-- name: "labocbz.deploy_haproxy"
+- name: "Deploy HAProxy"
   hosts: "all"
   gather_facts: true
   remote_user: root
@@ -13,7 +13,7 @@
   tasks:
 
     - name: "Install HAProxy"
-      when: inv_install_haproxy| default(false)
+      when: inv_install_haproxy | default(false)
       block:
         - name: "Include labocbz.prepare_host"
           tags:
@@ -27,7 +27,7 @@
           loop: "{{ inv_haproxy_cert_bundles }}"
           loop_control:
             loop_var: bundle
-          when: inv_haproxy_cert_bundles  is defined
+          when: inv_haproxy_cert_bundles is defined
           vars:
             add_certificates_bundle_name: "{{ bundle.name }}"
             add_certificates_bundle_type: "{{ bundle.type }}"
@@ -59,8 +59,100 @@
             haproxy_listen_stats_cert: "{{ inv_haproxy_listen_stats_cert }}"
             haproxy_listen_stats_key: "{{ inv_haproxy_listen_stats_key }}"
             haproxy_listen_stats_bind: "{{ inv_haproxy_listen_stats_bind }}"
+            haproxy_remove_old_confs: "{{ inv_haproxy_remove_old_confs }}"
           ansible.builtin.include_role:
             name: "labocbz.install_haproxy"
+
+- name: "Deploy HAProxy HTTP Confs"
+  hosts: "all"
+  gather_facts: true
+  remote_user: root
+  strategy: free
+  become: true
+  become_method: sudo
+  become_user: root
+  tags:
+    - "labocbz.install_haproxy"
+
+  tasks:
+
+    - name: "Install HAProxy"
+      when: inv_install_haproxy | default(false)
+      block:
+        - name: "Include labocbz.add_certificates"
+          tags:
+            - "labocbz.add_certificates"
+          loop: "{{ inv_haproxy_http_cert_bundles }}"
+          loop_control:
+            loop_var: bundle
+          when: inv_haproxy_http_cert_bundles is defined
+          vars:
+            add_certificates_bundle_name: "{{ bundle.name }}"
+            add_certificates_bundle_type: "{{ bundle.type }}"
+            add_certificates_bundle_src: "{{ bundle.src }}"
+            add_certificates_bundle_dest: "{{ bundle.dest }}"
+            add_certificates_bundle_src_user: "{{ bundle.src_user }}"
+            add_certificates_bundle_src_password: "{{ bundle.src_password }}"
+            add_certificates_bundle_dest_user: "{{ bundle.dest_user }}"
+            add_certificates_bundle_dest_group: "{{ bundle.dest_group }}"
+            add_certificates_bundle_dest_mode: "{{ bundle.dest_mode }}"
+          ansible.builtin.include_role:
+            name: "labocbz.add_certificates"
+
+        - name: "Include labocbz.add_haproxy_http_confs"
+          tags:
+            - "labocbz.add_haproxy_http_confs"
+          vars:
+            haproxy_confs_path: "{{ inv_haproxy_confs_path }}"
+            haproxy_configurations: "{{ inv_haproxy_http_configurations }}"
+            haproxy_ssl_path: "{{ inv_haproxy_ssl_path }}"
+          ansible.builtin.include_role:
+            name: "labocbz.add_haproxy_http_confs"
+
+- name: "Deploy HAProxy BDD Confs"
+  hosts: "all"
+  gather_facts: true
+  remote_user: root
+  strategy: free
+  become: true
+  become_method: sudo
+  become_user: root
+  tags:
+    - "labocbz.install_haproxy"
+
+  tasks:
+
+    - name: "Install HAProxy"
+      when: inv_install_haproxy | default(false)
+      block:
+        - name: "Include labocbz.add_certificates"
+          tags:
+            - "labocbz.add_certificates"
+          loop: "{{ inv_haproxy_bdd_cert_bundles }}"
+          loop_control:
+            loop_var: bundle
+          when: inv_haproxy_bdd_cert_bundles is defined
+          vars:
+            add_certificates_bundle_name: "{{ bundle.name }}"
+            add_certificates_bundle_type: "{{ bundle.type }}"
+            add_certificates_bundle_src: "{{ bundle.src }}"
+            add_certificates_bundle_dest: "{{ bundle.dest }}"
+            add_certificates_bundle_src_user: "{{ bundle.src_user }}"
+            add_certificates_bundle_src_password: "{{ bundle.src_password }}"
+            add_certificates_bundle_dest_user: "{{ bundle.dest_user }}"
+            add_certificates_bundle_dest_group: "{{ bundle.dest_group }}"
+            add_certificates_bundle_dest_mode: "{{ bundle.dest_mode }}"
+          ansible.builtin.include_role:
+            name: "labocbz.add_certificates"
+
+        - name: "Include labocbz.add_haproxy_bdd_confs"
+          tags:
+            - "labocbz.add_haproxy_bdd_confs"
+          vars:
+            haproxy_confs_path: "{{ inv_haproxy_confs_path }}"
+            haproxy_configurations: "{{ inv_haproxy_bdd_configurations }}"
+          ansible.builtin.include_role:
+            name: "labocbz.add_haproxy_bdd_confs"
 
 - name: "Install Apache2"
   hosts: "{{ tower_env | default([]) }}"
