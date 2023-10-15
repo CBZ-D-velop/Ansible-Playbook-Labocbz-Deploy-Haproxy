@@ -18,11 +18,12 @@ inv_haproxy_listen_stats: true
 inv_haproxy_listen_stats_https: true
 inv_haproxy_listen_stats_cert: "{{ inv_haproxy_ssl_path }}/my-haproxy-server.domain.tld/my-haproxy-server.domain.tld.pem.crt"
 inv_haproxy_listen_stats_key: "{{ inv_haproxy_ssl_path }}/my-haproxy-server.domain.tld/my-haproxy-server.domain.tld.pem.key"
-inv_haproxy_listen_stats_port: 8181
+inv_haproxy_listen_stats_port: 8080
 inv_haproxy_listen_stats_uri: ""
-#inv_haproxy_stats_login: "joe"
-#inv_haproxy_stats_password: "passwd"
+inv_haproxy_stats_login: "joe"
+inv_haproxy_stats_password: "passwd"
 inv_haproxy_listen_stats_bind: "127.0.0.1"
+inv_haproxy_remove_old_confs: true
 
 inv_haproxy_cert_bundles:
   - name: "My-Local-Ansible-Root-CA.pem.crt"

@@ -95,6 +95,9 @@ Here you can put your change to keep a trace of your work and decisions.
 
 * Playbook hanlde install of HAProxy
 * Playbook handle install of Apache2 as frontal reverse proxy
+* Playbook deploy HAProxy HTTP confs
+* Playbook deploy HAProxy BDD confs
+* Playbook can remove all old confs before deploy another one
 
 ## Authors
 
@@ -104,3 +107,10 @@ Here you can put your change to keep a trace of your work and decisions.
 
 * [Ansible playbook documentation](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_playbooks.html)
 * [Ansible Molecule documentation](https://molecule.readthedocs.io/)
+* [labocbz.prepare_host](https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Prepare-Host.git)
+* [labocbz.add_certificates](https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Add-Certificates.git)
+* [labocbz.install_haproxy](https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Install-Haproxy.git)
+* [labocbz.add_haproxy_http_confs](https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Add-Haproxy-HTTP-Confs.git)
+* [labocbz.add_haproxy_bdd_confs](https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Add-Haproxy-BDD-Confs.git)
+* [labocbz.install_apache](https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Install-Apache.git)
+* [labocbz.add_apache_confs](https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Add-Apache-Confs.git)
