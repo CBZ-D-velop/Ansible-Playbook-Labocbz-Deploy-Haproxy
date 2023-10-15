@@ -85,7 +85,7 @@
           loop: "{{ inv_haproxy_http_cert_bundles }}"
           loop_control:
             loop_var: bundle
-          when: inv_haproxy_http_cert_bundles  is defined
+          when: inv_haproxy_http_cert_bundles is defined
           vars:
             add_certificates_bundle_name: "{{ bundle.name }}"
             add_certificates_bundle_type: "{{ bundle.type }}"
@@ -131,7 +131,7 @@
           loop: "{{ inv_haproxy_bdd_cert_bundles }}"
           loop_control:
             loop_var: bundle
-          when: inv_haproxy_bdd_cert_bundles  is defined
+          when: inv_haproxy_bdd_cert_bundles is defined
           vars:
             add_certificates_bundle_name: "{{ bundle.name }}"
             add_certificates_bundle_type: "{{ bundle.type }}"
