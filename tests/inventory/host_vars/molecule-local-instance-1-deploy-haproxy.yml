@@ -67,7 +67,7 @@ inv_haproxy_http_configurations:
   - name: "proxy-google"
     frontend:
       description: "My HTTPS HAProxy proxy-google with backup"
-      bind: "127.0.0.1"
+      bind: "*"
       port: 8181
       https: true
       crt: "{{ inv_haproxy_ssl_path }}/my-haproxy-server.domain.tld/my-haproxy-server.domain.tld.pem.crt"
@@ -97,7 +97,7 @@ inv_haproxy_bdd_configurations:
   - name: "my.cluster.database.domain.tld"
     frontend:
       description: "My first cluster database with TCP frontend address"
-      bind: "127.0.0.1:10040"
+      bind: "*:10040"
       mode: "tcp"
     backend:
       balance: roundrobin
@@ -117,7 +117,7 @@ inv_haproxy_bdd_configurations:
   - name: "my.cluster-failover.database.domain.tld"
     frontend:
       description: "My first cluster database with TCP frontend address and FAILOVER"
-      bind: "127.0.0.1:10040"
+      bind: "*:10040"
       mode: "tcp"
     backend:
       balance: roundrobin
