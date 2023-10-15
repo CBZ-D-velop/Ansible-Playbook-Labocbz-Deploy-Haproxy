@@ -1,5 +1,5 @@
 ---
-- name: "labocbz.deploy_haproxy"
+- name: "Deploy HAProxy"
   hosts: "all"
   gather_facts: true
   remote_user: root
@@ -13,7 +13,7 @@
   tasks:
 
     - name: "Install HAProxy"
-      when: inv_install_haproxy| default(false)
+      when: inv_install_haproxy | default(false)
       block:
         - name: "Include labocbz.prepare_host"
           tags:
