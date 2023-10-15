@@ -22,7 +22,7 @@ inv_haproxy_listen_stats_port: 8080
 inv_haproxy_listen_stats_uri: ""
 inv_haproxy_stats_login: "joe"
 inv_haproxy_stats_password: "passwd"
-inv_haproxy_listen_stats_bind: "127.0.0.1"
+inv_haproxy_listen_stats_bind: "*"
 inv_haproxy_remove_old_confs: true
 
 inv_haproxy_cert_bundles:
