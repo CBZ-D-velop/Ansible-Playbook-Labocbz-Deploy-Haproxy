@@ -18,6 +18,7 @@ inv_haproxy_listen_stats: true
 inv_haproxy_listen_stats_https: true
 inv_haproxy_listen_stats_cert: "{{ inv_haproxy_ssl_path }}/my-haproxy-server.domain.tld/my-haproxy-server.domain.tld.pem.crt"
 inv_haproxy_listen_stats_key: "{{ inv_haproxy_ssl_path }}/my-haproxy-server.domain.tld/my-haproxy-server.domain.tld.pem.key"
+inv_haproxy_listen_stats_fullchain: "{{ inv_haproxy_ssl_path }}/my-haproxy-server.domain.tld/my-haproxy-server.domain.tld-fullchain.pem.key"
 inv_haproxy_listen_stats_port: 8080
 inv_haproxy_listen_stats_uri: ""
 inv_haproxy_stats_login: "joe"

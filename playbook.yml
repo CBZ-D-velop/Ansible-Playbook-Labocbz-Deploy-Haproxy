@@ -58,6 +58,7 @@
             haproxy_listen_stats_https: "{{ inv_haproxy_listen_stats_https }}"
             haproxy_listen_stats_cert: "{{ inv_haproxy_listen_stats_cert }}"
             haproxy_listen_stats_key: "{{ inv_haproxy_listen_stats_key }}"
+            haproxy_listen_stats_fullchain: "{{ inv_haproxy_listen_stats_fullchain }}"
             haproxy_listen_stats_bind: "{{ inv_haproxy_listen_stats_bind }}"
             haproxy_remove_old_confs: "{{ inv_haproxy_remove_old_confs }}"
           ansible.builtin.include_role:
@@ -77,7 +78,7 @@
   tasks:
 
     - name: "Install HAProxy"
-      when: inv_install_haproxy | default(false)
+      when: (inv_install_haproxy | default(false)) and (inv_haproxy_http_configurations | default(false))
       block:
         - name: "Include labocbz.add_certificates"
           tags:
@@ -123,7 +124,7 @@
   tasks:
 
     - name: "Install HAProxy"
-      when: inv_install_haproxy | default(false)
+      when: (inv_install_haproxy | default(false)) and (inv_haproxy_bdd_configurations | default(false))
       block:
         - name: "Include labocbz.add_certificates"
           tags:
