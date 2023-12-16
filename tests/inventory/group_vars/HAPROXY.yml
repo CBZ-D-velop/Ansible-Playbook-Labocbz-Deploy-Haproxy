@@ -3,12 +3,12 @@ inv_prepare_host_haproxy_system_users:
   - login: "haproxy"
     group: "haproxy"
 
-inv_haproxy_path: "/etc/haproxy"
-inv_haproxy_confs_path: "{{ inv_haproxy_path }}/conf.d"
-inv_haproxy_error_path: "{{ inv_haproxy_path }}/errors"
-inv_haproxy_ssl_path: "{{ inv_haproxy_path }}/ssl"
+inv_install_haproxy_path: "/etc/haproxy"
+inv_install_haproxy_confs_path: "{{ inv_install_haproxy_path }}/conf.d"
+inv_install_haproxy_error_path: "{{ inv_install_haproxy_path }}/errors"
+inv_install_haproxy_ssl_path: "{{ inv_install_haproxy_path }}/ssl"
 
-inv_haproxy_error_files:
+inv_install_haproxy_error_files:
   - "400"
   - "403"
   - "408"
@@ -17,19 +17,19 @@ inv_haproxy_error_files:
   - "503"
   - "504"
 
-inv_haproxy_listen_stats: true
-inv_haproxy_listen_stats_https: true
-inv_haproxy_listen_stats_cert: "{{ inv_haproxy_ssl_path }}/my-haproxy-server.domain.tld/my-haproxy-server.domain.tld.pem.crt"
-inv_haproxy_listen_stats_key: "{{ inv_haproxy_ssl_path }}/my-haproxy-server.domain.tld/my-haproxy-server.domain.tld.pem.key"
-inv_haproxy_listen_stats_fullchain: "{{ inv_haproxy_ssl_path }}/my-haproxy-server.domain.tld/my-haproxy-server.domain.tld-fullchain.pem.key"
-inv_haproxy_listen_stats_port: 8080
-inv_haproxy_listen_stats_uri: ""
-inv_haproxy_stats_login: "joe"
-inv_haproxy_stats_password: "passwd"
-inv_haproxy_listen_stats_bind: "*"
-inv_haproxy_remove_old_confs: true
+inv_install_haproxy_listen_stats: true
+inv_install_haproxy_listen_stats_https: true
+inv_install_haproxy_listen_stats_cert: "{{ inv_install_haproxy_ssl_path }}/my-haproxy-server.domain.tld/my-haproxy-server.domain.tld.pem.crt"
+inv_install_haproxy_listen_stats_key: "{{ inv_install_haproxy_ssl_path }}/my-haproxy-server.domain.tld/my-haproxy-server.domain.tld.pem.key"
+inv_install_haproxy_listen_stats_fullchain: "{{ inv_install_haproxy_ssl_path }}/my-haproxy-server.domain.tld/my-haproxy-server.domain.tld-fullchain.pem.key"
+inv_install_haproxy_listen_stats_port: 8080
+inv_install_haproxy_listen_stats_uri: ""
+inv_install_haproxy_stats_login: "joe"
+inv_install_haproxy_stats_password: "passwd"
+inv_install_haproxy_listen_stats_bind: "*"
+inv_install_haproxy_remove_old_confs: false
 
-inv_haproxy_cert_bundles:
+inv_install_haproxy_cert_bundles:
   - name: "My-Local-Ansible-Root-CA.pem.crt"
     type: "CA"
     src: "/tmp/My-Local-Ansible-Root-CA.pem.crt"
@@ -54,4 +54,9 @@ inv_haproxy_cert_bundles:
 
 inv_logrotate_configurations_haproxy:
   - "haproxy"
-  #- "modsecurity"
+
+inv_add_haproxy_http_confs_confs_path: "/etc/haproxy/conf.d"
+inv_add_haproxy_http_confs_ssl_path: "/etc/haproxy/ssl"
+
+inv_add_haproxy_bdd_confs_confs_path: "/etc/haproxy/conf.d"
+inv_add_haproxy_bdd_confs_ssl_path: "/etc/haproxy/ssl"
