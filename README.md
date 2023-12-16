@@ -118,6 +118,11 @@ Here you can put your change to keep a trace of your work and decisions.
 * Playbook can remove all old confs before deploy another one
 * Playbook basically install a Reverse Proxy SSL SecOptions Load Balancer
 
+### 2023-12-16: System users
+
+* Role can now use system users and address groups
+* Updated with 10 years cert
+
 ## Authors
 
 * Lord Robin Crombez

@@ -18,6 +18,8 @@
         - name: "Include labocbz.prepare_host"
           tags:
             - "labocbz.prepare_host"
+          vars:
+            prepare_host_system_users: "{{ inv_prepare_host_haproxy_system_users }}"
           ansible.builtin.include_role:
             name: "labocbz.prepare_host"
 
@@ -63,6 +65,14 @@
             haproxy_remove_old_confs: "{{ inv_haproxy_remove_old_confs }}"
           ansible.builtin.include_role:
             name: "labocbz.install_haproxy"
+
+        - name: "Include labocbz.add_logrotate_confs"
+          tags:
+            - "labocbz.add_logrotate_confs"
+          vars:
+            logrotate_configurations: "{{ inv_logrotate_configurations_haproxy }}"
+          ansible.builtin.include_role:
+            name: "labocbz.add_logrotate_confs"
 
 - name: "Deploy HAProxy HTTP Confs"
   hosts: "all"
@@ -174,6 +184,8 @@
         - name: "Include labocbz.prepare_host"
           tags:
             - "labocbz.prepare_host"
+          vars:
+            prepare_host_system_users: "{{ inv_prepare_host_apache_system_users }}"
           ansible.builtin.include_role:
             name: "labocbz.prepare_host"
 

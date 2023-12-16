@@ -1,4 +1,7 @@
 ---
+inv_prepare_host_haproxy_system_users:
+  - login: "haproxy"
+    group: "haproxy"
 
 inv_haproxy_path: "/etc/haproxy"
 inv_haproxy_confs_path: "{{ inv_haproxy_path }}/conf.d"
@@ -45,6 +48,10 @@ inv_haproxy_cert_bundles:
     dest: "/etc/haproxy/ssl"
     #src_user: "myUser"
     #src_password: "secretPassword"
-    dest_user: "root"
-    dest_group: "root"
+    dest_user: "haproxy"
+    dest_group: "haproxy"
     dest_mode: "0700"
+
+inv_logrotate_configurations_haproxy:
+  - "haproxy"
+  #- "modsecurity"
