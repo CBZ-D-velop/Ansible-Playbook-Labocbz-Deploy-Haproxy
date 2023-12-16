@@ -1,9 +1,8 @@
 ---
 - name: "Deploy HAProxy"
-  hosts: "all"
+  hosts: "{{ tower_env | default([]) }}"
   gather_facts: true
   remote_user: root
-  strategy: free
   become: true
   become_method: sudo
   become_user: root
@@ -18,16 +17,18 @@
         - name: "Include labocbz.prepare_host"
           tags:
             - "labocbz.prepare_host"
+          vars:
+            prepare_host_system_users: "{{ inv_prepare_host_haproxy_system_users }}"
           ansible.builtin.include_role:
             name: "labocbz.prepare_host"
 
         - name: "Include labocbz.add_certificates"
           tags:
             - "labocbz.add_certificates"
-          loop: "{{ inv_haproxy_cert_bundles }}"
+          loop: "{{ inv_install_haproxy_cert_bundles }}"
           loop_control:
             loop_var: bundle
-          when: inv_haproxy_cert_bundles is defined
+          when: inv_install_haproxy_cert_bundles is defined
           vars:
             add_certificates_bundle_name: "{{ bundle.name }}"
             add_certificates_bundle_type: "{{ bundle.type }}"
@@ -45,30 +46,37 @@
           tags:
             - "labocbz.install_haproxy"
           vars:
-            haproxy_path: "{{ inv_haproxy_path }}"
-            haproxy_confs_path: "{{ inv_haproxy_confs_path }}"
-            haproxy_error_path: "{{ inv_haproxy_error_path }}"
-            haproxy_ssl_path: "{{ inv_haproxy_ssl_path }}"
-            haproxy_error_files: "{{ inv_haproxy_error_files }}"
-            haproxy_listen_stats: "{{ inv_haproxy_listen_stats }}"
-            haproxy_listen_stats_port: "{{ inv_haproxy_listen_stats_port }}"
-            haproxy_listen_stats_uri: "{{ inv_haproxy_listen_stats_uri }}"
-            haproxy_stats_login: "{{ inv_haproxy_stats_login }}"
-            haproxy_stats_password: "{{ inv_haproxy_stats_password }}"
-            haproxy_listen_stats_https: "{{ inv_haproxy_listen_stats_https }}"
-            haproxy_listen_stats_cert: "{{ inv_haproxy_listen_stats_cert }}"
-            haproxy_listen_stats_key: "{{ inv_haproxy_listen_stats_key }}"
-            haproxy_listen_stats_fullchain: "{{ inv_haproxy_listen_stats_fullchain }}"
-            haproxy_listen_stats_bind: "{{ inv_haproxy_listen_stats_bind }}"
-            haproxy_remove_old_confs: "{{ inv_haproxy_remove_old_confs }}"
+            install_haproxy_path: "{{ inv_install_haproxy_path }}"
+            install_haproxy_confs_path: "{{ inv_install_haproxy_confs_path }}"
+            install_haproxy_error_path: "{{ inv_install_haproxy_error_path }}"
+            install_haproxy_ssl_path: "{{ inv_install_haproxy_ssl_path }}"
+            install_haproxy_error_files: "{{ inv_install_haproxy_error_files }}"
+            install_haproxy_listen_stats: "{{ inv_install_haproxy_listen_stats }}"
+            install_haproxy_listen_stats_port: "{{ inv_install_haproxy_listen_stats_port }}"
+            install_haproxy_listen_stats_uri: "{{ inv_install_haproxy_listen_stats_uri }}"
+            install_haproxy_stats_login: "{{ inv_install_haproxy_stats_login }}"
+            install_haproxy_stats_password: "{{ inv_install_haproxy_stats_password }}"
+            install_haproxy_listen_stats_https: "{{ inv_install_haproxy_listen_stats_https }}"
+            install_haproxy_listen_stats_cert: "{{ inv_install_haproxy_listen_stats_cert }}"
+            install_haproxy_listen_stats_key: "{{ inv_install_haproxy_listen_stats_key }}"
+            install_haproxy_listen_stats_fullchain: "{{ inv_install_haproxy_listen_stats_fullchain }}"
+            install_haproxy_listen_stats_bind: "{{ inv_install_haproxy_listen_stats_bind }}"
+            install_haproxy_remove_old_confs: "{{ inv_install_haproxy_remove_old_confs }}"
           ansible.builtin.include_role:
             name: "labocbz.install_haproxy"
 
+        - name: "Include labocbz.add_logrotate_confs"
+          tags:
+            - "labocbz.add_logrotate_confs"
+          vars:
+            logrotate_configurations: "{{ inv_logrotate_configurations_haproxy }}"
+          ansible.builtin.include_role:
+            name: "labocbz.add_logrotate_confs"
+
 - name: "Deploy HAProxy HTTP Confs"
-  hosts: "all"
+  hosts: "{{ tower_env | default([]) }}"
   gather_facts: true
   remote_user: root
-  strategy: free
   become: true
   become_method: sudo
   become_user: root
@@ -78,15 +86,15 @@
   tasks:
 
     - name: "Install HAProxy"
-      when: (inv_install_haproxy | default(false)) and (inv_haproxy_http_configurations | default(false))
+      when: (inv_install_haproxy | default(false)) and (inv_add_haproxy_http_confs_configurations | default(false))
       block:
         - name: "Include labocbz.add_certificates"
           tags:
             - "labocbz.add_certificates"
-          loop: "{{ inv_haproxy_http_cert_bundles }}"
+          loop: "{{ inv_install_haproxy_http_cert_bundles }}"
           loop_control:
             loop_var: bundle
-          when: inv_haproxy_http_cert_bundles is defined
+          when: inv_install_haproxy_http_cert_bundles is defined
           vars:
             add_certificates_bundle_name: "{{ bundle.name }}"
             add_certificates_bundle_type: "{{ bundle.type }}"
@@ -104,17 +112,16 @@
           tags:
             - "labocbz.add_haproxy_http_confs"
           vars:
-            haproxy_confs_path: "{{ inv_haproxy_confs_path }}"
-            haproxy_configurations: "{{ inv_haproxy_http_configurations }}"
-            haproxy_ssl_path: "{{ inv_haproxy_ssl_path }}"
+            add_haproxy_http_confs_confs_path: "{{ inv_add_haproxy_http_confs_confs_path }}"
+            add_haproxy_http_confs_configurations: "{{ inv_add_haproxy_http_confs_configurations }}"
+            add_haproxy_http_confs_ssl_path: "{{ inv_add_haproxy_http_confs_ssl_path }}"
           ansible.builtin.include_role:
             name: "labocbz.add_haproxy_http_confs"
 
 - name: "Deploy HAProxy BDD Confs"
-  hosts: "all"
+  hosts: "{{ tower_env | default([]) }}"
   gather_facts: true
   remote_user: root
-  strategy: free
   become: true
   become_method: sudo
   become_user: root
@@ -124,15 +131,15 @@
   tasks:
 
     - name: "Install HAProxy"
-      when: (inv_install_haproxy | default(false)) and (inv_haproxy_bdd_configurations | default(false))
+      when: (inv_install_haproxy | default(false)) and (inv_add_haproxy_bdd_confs_configurations | default(false))
       block:
         - name: "Include labocbz.add_certificates"
           tags:
             - "labocbz.add_certificates"
-          loop: "{{ inv_haproxy_bdd_cert_bundles }}"
+          loop: "{{ inv_install_haproxy_bdd_cert_bundles }}"
           loop_control:
             loop_var: bundle
-          when: inv_haproxy_bdd_cert_bundles is defined
+          when: inv_install_haproxy_bdd_cert_bundles is defined
           vars:
             add_certificates_bundle_name: "{{ bundle.name }}"
             add_certificates_bundle_type: "{{ bundle.type }}"
@@ -150,8 +157,8 @@
           tags:
             - "labocbz.add_haproxy_bdd_confs"
           vars:
-            haproxy_confs_path: "{{ inv_haproxy_confs_path }}"
-            haproxy_configurations: "{{ inv_haproxy_bdd_configurations }}"
+            add_haproxy_bdd_confs_confs_path: "{{ inv_add_haproxy_bdd_confs_confs_path }}"
+            add_haproxy_bdd_confs_configurations: "{{ inv_add_haproxy_bdd_confs_configurations }}"
           ansible.builtin.include_role:
             name: "labocbz.add_haproxy_bdd_confs"
 
@@ -174,6 +181,8 @@
         - name: "Include labocbz.prepare_host"
           tags:
             - "labocbz.prepare_host"
+          vars:
+            prepare_host_system_users: "{{ inv_prepare_host_apache_system_users }}"
           ansible.builtin.include_role:
             name: "labocbz.prepare_host"
 
@@ -231,7 +240,7 @@
             add_apache_confs_request_body: "{{ inv_add_apache_confs_request_body }}"
             add_apache_confs_security_body_limit: "{{ inv_add_apache_confs_security_body_limit }}"
             add_apache_confs_ssl_files_path: "{{ inv_add_apache_confs_ssl_files_path }}"
-            add_apache_confs_conf_path: "{{ inv_add_apache_confs_conf_path }}"
+            add_apache_confs_confs_path: "{{ inv_add_apache_confs_confs_path }}"
             add_apache_confs_base_document_root: "{{ inv_add_apache_confs_base_document_root }}"
             add_apache_confs_configurations: "{{ inv_add_apache_confs_configurations }}"
           ansible.builtin.include_role:

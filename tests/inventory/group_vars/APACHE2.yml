@@ -1,4 +1,8 @@
 ---
+inv_prepare_host_apache_system_users:
+  - login: "www-data"
+    group: "www-data"
+
 inv_install_apache_https_listen_port: 443
 inv_install_apache_http_listen_port: 80
 
@@ -28,4 +32,4 @@ inv_install_apache_remove_all_vhosts: false
 
 inv_logrotate_configurations_apache:
   - "apache2"
-  - "modsecurity"
+  #- "modsecurity"
