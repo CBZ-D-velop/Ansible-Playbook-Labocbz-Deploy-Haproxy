@@ -22,10 +22,10 @@
         - name: "Include labocbz.add_certificates"
           tags:
             - "labocbz.add_certificates"
-          loop: "{{ inv_install_haproxy_cert_bundles }}"
+          loop: "{{ inv_haproxy_cert_bundles }}"
           loop_control:
             loop_var: bundle
-          when: inv_install_haproxy_cert_bundles is defined
+          when: inv_haproxy_cert_bundles is defined
           vars:
             add_certificates_bundle_name: "{{ bundle.name }}"
             add_certificates_bundle_type: "{{ bundle.type }}"
@@ -65,6 +65,9 @@
         - name: "Install HAProxy HTTP confs"
           when: inv_add_haproxy_http_confs_configurations | default(false)
           block:
+            - name: "Start HAProxy"
+              ansible.builtin.meta: flush_handlers
+
             - name: "Include labocbz.add_certificates"
               tags:
                 - "labocbz.add_certificates"
@@ -98,6 +101,9 @@
         - name: "Install HAProxy BDD confs"
           when: inv_add_haproxy_bdd_confs_configurations | default(false)
           block:
+            - name: "Start HAProxy"
+              ansible.builtin.meta: flush_handlers
+
             - name: "Include labocbz.add_certificates"
               tags:
                 - "labocbz.add_certificates"
@@ -117,6 +123,15 @@
                 add_certificates_bundle_dest_mode: "{{ bundle.dest_mode }}"
               ansible.builtin.include_role:
                 name: "labocbz.add_certificates"
+
+            - name: "Include labocbz.add_haproxy_bdd_confs"
+              tags:
+                - "labocbz.add_haproxy_bdd_confs"
+              vars:
+                add_haproxy_bdd_confs_confs_path: "{{ inv_add_haproxy_bdd_confs_confs_path }}"
+                add_haproxy_bdd_confs_configurations: "{{ inv_add_haproxy_bdd_confs_configurations }}"
+              ansible.builtin.include_role:
+                name: "labocbz.add_haproxy_bdd_confs"
 
         - name: "Include labocbz.add_logrotate_confs"
           tags:
@@ -226,13 +241,13 @@
 
         - name: "Block all trafic from other hosts on port HAProxy HTTP (disable acces to HAProxy without Apache2)"
           when: inv_add_haproxy_http_confs_configurations | default(false)
-          loop: "{{ add_haproxy_http_confs_configurations }}"
+          loop: "{{ inv_add_haproxy_http_confs_configurations }}"
           loop_control:
             loop_var: conf
           ansible.builtin.iptables:
             chain: "INPUT"
             protocol: "tcp"
-            destination_port: "{{ conf.port }}"
+            destination_port: "{{ conf.frontend.port }}"
             jump: "DROP"
             source: "! 127.0.0.1"
             comment: "Force external user to use HAProxy"

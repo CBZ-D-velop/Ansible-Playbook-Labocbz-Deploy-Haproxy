@@ -34,7 +34,7 @@ inv_install_haproxy_stats_password: "passwd"
 inv_install_haproxy_listen_stats_bind: "*"
 inv_install_haproxy_remove_old_confs: false
 
-inv_install_haproxy_cert_bundles:
+inv_haproxy_cert_bundles:
   - name: "My-Local-Ansible-Root-CA.pem.crt"
     type: "CA"
     src: "/tmp/My-Local-Ansible-Root-CA.pem.crt"
