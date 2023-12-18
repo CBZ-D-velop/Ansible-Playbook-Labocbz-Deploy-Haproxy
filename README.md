@@ -123,6 +123,12 @@ Here you can put your change to keep a trace of your work and decisions.
 * Role can now use system users and address groups
 * Updated with 10 years cert
 
+### 2023-12-18: Logs, reorganize
+
+* Now you can deploy HTTP and BDD conf with the same run
+* You have to pass with Apache2 if enabled
+* Iptables rule for block external access to HAProxy if Apache2 enabled
+
 ## Authors
 
 * Lord Robin Crombez

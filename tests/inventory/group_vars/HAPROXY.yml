@@ -1,7 +1,12 @@
 ---
+inv_install_haproxy: true
+
 inv_prepare_host_haproxy_system_users:
   - login: "haproxy"
     group: "haproxy"
+
+inv_logrotate_haproxy_configurations:
+  - "haproxy"
 
 inv_install_haproxy_path: "/etc/haproxy"
 inv_install_haproxy_confs_path: "{{ inv_install_haproxy_path }}/conf.d"
@@ -29,7 +34,7 @@ inv_install_haproxy_stats_password: "passwd"
 inv_install_haproxy_listen_stats_bind: "*"
 inv_install_haproxy_remove_old_confs: false
 
-inv_install_haproxy_cert_bundles:
+inv_haproxy_cert_bundles:
   - name: "My-Local-Ansible-Root-CA.pem.crt"
     type: "CA"
     src: "/tmp/My-Local-Ansible-Root-CA.pem.crt"
@@ -52,11 +57,83 @@ inv_install_haproxy_cert_bundles:
     dest_group: "haproxy"
     dest_mode: "0700"
 
-inv_logrotate_configurations_haproxy:
-  - "haproxy"
-
 inv_add_haproxy_http_confs_confs_path: "/etc/haproxy/conf.d"
 inv_add_haproxy_http_confs_ssl_path: "/etc/haproxy/ssl"
 
 inv_add_haproxy_bdd_confs_confs_path: "/etc/haproxy/conf.d"
 inv_add_haproxy_bdd_confs_ssl_path: "/etc/haproxy/ssl"
+
+inv_add_haproxy_http_confs_cert_bundles: "{{ inv_install_haproxy_cert_bundles }}"
+inv_add_haproxy_bdd_confs_cert_bundles: "{{ inv_install_haproxy_cert_bundles }}"
+
+inv_add_haproxy_http_confs_configurations:
+  - name: "proxy-google"
+    frontend:
+      description: "My HTTPS HAProxy proxy-google with backup"
+      bind: "*"
+      port: 8181
+      https: true
+      crt: "{{ inv_install_haproxy_ssl_path }}/my-haproxy-server.domain.tld/my-haproxy-server.domain.tld.pem.crt"
+      key: "{{ inv_install_haproxy_ssl_path }}/my-haproxy-server.domain.tld/my-haproxy-server.domain.tld.pem.key"
+      mode: "http"
+    backend:
+      balance: leastconn
+      options:
+        - httpclose
+        - forwardfor
+        - httpchk GET /
+      forwarded_port: 443
+      http_check_status: 200
+      servers:
+        - name: "google.com-as-BACKUP"
+          addresse: "google.com"
+          port: 443
+          https: true
+          backup: true
+        - name: "google.com"
+          addresse: "google.com"
+          port: 443
+          https: true
+
+inv_add_haproxy_bdd_confs_configurations:
+  - name: "my.cluster.database.domain.tld"
+    frontend:
+      description: "My first cluster database with TCP frontend address"
+      bind: "*:10040"
+      mode: "tcp"
+    backend:
+      balance: roundrobin
+      options:
+        - tcpka
+      servers:
+        - name: "backend-server-1"
+          addresse: "127.0.0.1"
+          port: "3306"
+        - name: "backend-server-2"
+          addresse: "127.0.0.1"
+          port: "3306"
+        - name: "backend-server-3"
+          addresse: "127.0.0.1"
+          port: "3306"
+
+  - name: "my.cluster-failover.database.domain.tld"
+    frontend:
+      description: "My first cluster database with TCP frontend address and FAILOVER"
+      bind: "*:10040"
+      mode: "tcp"
+    backend:
+      balance: roundrobin
+      options:
+        - tcpka
+      servers:
+        - name: "backend-server-1"
+          addresse: "127.0.0.1"
+          port: "3306"
+        - name: "backend-server-2"
+          addresse: "127.0.0.1"
+          port: "3306"
+          backup: true
+        - name: "backend-server-3"
+          addresse: "127.0.0.1"
+          port: "3306"
+          backup: true
