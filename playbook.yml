@@ -220,16 +220,6 @@
           ansible.builtin.include_role:
             name: "labocbz.add_logrotate_confs"
 
-
-        - name: "Include labocbz.add_haproxy_bdd_confs"
-          tags:
-            - "labocbz.add_haproxy_bdd_confs"
-          vars:
-            add_haproxy_bdd_confs_confs_path: "{{ inv_add_haproxy_bdd_confs_confs_path }}"
-            add_haproxy_bdd_confs_configurations: "{{ inv_add_haproxy_bdd_confs_configurations }}"
-          ansible.builtin.include_role:
-            name: "labocbz.add_haproxy_bdd_confs"
-
         - name: "Block all trafic from other hosts on port HAProxy stats (disable acces to HAProxy without Apache2)"
           ansible.builtin.iptables:
             chain: "INPUT"
