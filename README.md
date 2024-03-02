@@ -129,6 +129,12 @@ Here you can put your change to keep a trace of your work and decisions.
 * You have to pass with Apache2 if enabled
 * Iptables rule for block external access to HAProxy if Apache2 enabled
 
+### 2024-03-02: Remastered
+
+* Imported new CICD
+* Rework global on readme
+* Rename of vars __
+
 ## Authors
 
 * Lord Robin Crombez
