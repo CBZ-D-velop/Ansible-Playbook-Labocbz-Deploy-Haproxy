@@ -1,8 +1,8 @@
 ---
 # Don't forget to keep this file updated
 # molecule/<scenario>/verify.yml
-- name: "Verify HAPROXY"
-  hosts: "all:&HAPROXY"
+- name: "Verify"
+  hosts: "cicd-debian-11"
   gather_facts: false
   tasks:
 
@@ -19,10 +19,10 @@
           block:
             - name: "Check HAProxy folders"
               loop:
-                - "{{ inv_install_haproxy_path }}"
-                - "{{ inv_install_haproxy_confs_path }}"
-                - "{{ inv_install_haproxy_error_path }}"
-                - "{{ inv_install_haproxy_ssl_path }}"
+                - "{{ inv_install_haproxy__path }}"
+                - "{{ inv_install_haproxy__confs_path }}"
+                - "{{ inv_install_haproxy__error_path }}"
+                - "{{ inv_install_haproxy__ssl_path }}"
               loop_control:
                 loop_var: folder_path
               register: folder_check
@@ -31,50 +31,50 @@
                 path: "{{ folder_path }}"
 
             - name: "Check HAProxy errors files http"
-              loop: "{{ inv_install_haproxy_error_files }}"
+              loop: "{{ inv_install_haproxy__error_files }}"
               loop_control:
                 loop_var: file_path
               register: file_check
               failed_when: not file_check.stat.exists
               ansible.builtin.stat:
-                path: "{{ inv_install_haproxy_error_path }}/{{ file_path }}.http"
+                path: "{{ inv_install_haproxy__error_path }}/{{ file_path }}.http"
 
         - name: "Check stats URL protection"
-          when: inv_install_haproxy_listen_stats
+          when: inv_install_haproxy__listen_stats
           block:
 
             - name: "Check HAProxy connectivity"
               ansible.builtin.wait_for:
                 host: "127.0.0.1"
-                port: "{{ inv_install_haproxy_listen_stats_port }}"
+                port: "{{ inv_install_haproxy__listen_stats_port }}"
                 timeout: 120
 
             - name: "Check an unprotected stats HTTP URL"
-              when: not (inv_install_haproxy_stats_login is defined and inv_install_haproxy_stats_password is defined) and not inv_install_haproxy_listen_stats_https
+              when: not (inv_install_haproxy__stats_login is defined and inv_install_haproxy__stats_password is defined) and not inv_install_haproxy__listen_stats_https
               register: result
               failed_when: result.status != 200
               ansible.builtin.uri:
-                url: "http://127.0.0.1:{{ inv_install_haproxy_listen_stats_port }}/{{ inv_install_haproxy_listen_stats_uri }}"
+                url: "http://127.0.0.1:{{ inv_install_haproxy__listen_stats_port }}/{{ inv_install_haproxy__listen_stats_uri }}"
                 method: "GET"
 
             - name: "Check an unprotected stats HTTPS URL"
-              when: not (inv_install_haproxy_stats_login is defined and inv_install_haproxy_stats_password is defined) and not inv_install_haproxy_listen_stats_https
+              when: not (inv_install_haproxy__stats_login is defined and inv_install_haproxy__stats_password is defined) and not inv_install_haproxy__listen_stats_https
               register: result
               failed_when: result.status != 200
               ansible.builtin.uri:
-                url: "https://127.0.0.1:{{ inv_install_haproxy_listen_stats_port }}/{{ inv_install_haproxy_listen_stats_uri }}"
+                url: "https://127.0.0.1:{{ inv_install_haproxy__listen_stats_port }}/{{ inv_install_haproxy__listen_stats_uri }}"
                 method: "GET"
                 validate_certs: false
 
             - name: "Check a protected stats HTTP URL"
-              when: inv_install_haproxy_stats_login is defined and inv_install_haproxy_stats_password is defined and not inv_install_haproxy_listen_stats_https
+              when: inv_install_haproxy__stats_login is defined and inv_install_haproxy__stats_password is defined and not inv_install_haproxy__listen_stats_https
               block:
 
                 - name: "Check HTTP basic auth-protected URL availability"
                   register: result
                   failed_when: result.status != 401
                   ansible.builtin.uri:
-                    url: "http://127.0.0.1:{{ inv_install_haproxy_listen_stats_port }}/{{ inv_install_haproxy_listen_stats_uri }}"
+                    url: "http://127.0.0.1:{{ inv_install_haproxy__listen_stats_port }}/{{ inv_install_haproxy__listen_stats_uri }}"
                     method: "GET"
                     force_basic_auth: true
                     user: "notMyUser"
@@ -84,21 +84,21 @@
                   register: result
                   failed_when: result.status != 200
                   ansible.builtin.uri:
-                    url: "http://127.0.0.1:{{ inv_install_haproxy_listen_stats_port }}/{{ inv_install_haproxy_listen_stats_uri }}"
+                    url: "http://127.0.0.1:{{ inv_install_haproxy__listen_stats_port }}/{{ inv_install_haproxy__listen_stats_uri }}"
                     method: "GET"
                     force_basic_auth: true
-                    user: "{{ inv_install_haproxy_stats_login }}"
-                    password: "{{ inv_install_haproxy_stats_password }}"
+                    user: "{{ inv_install_haproxy__stats_login }}"
+                    password: "{{ inv_install_haproxy__stats_password }}"
 
             - name: "Check a protected stats HTTPS URL"
-              when: inv_install_haproxy_stats_login is defined and inv_install_haproxy_stats_password is defined and inv_install_haproxy_listen_stats_https
+              when: inv_install_haproxy__stats_login is defined and inv_install_haproxy__stats_password is defined and inv_install_haproxy__listen_stats_https
               block:
 
                 - name: "Check HTTP basic auth-protected URL availability"
                   register: result
                   failed_when: result.status != 401
                   ansible.builtin.uri:
-                    url: "https://127.0.0.1:{{ inv_install_haproxy_listen_stats_port }}/{{ inv_install_haproxy_listen_stats_uri }}"
+                    url: "https://127.0.0.1:{{ inv_install_haproxy__listen_stats_port }}/{{ inv_install_haproxy__listen_stats_uri }}"
                     method: "GET"
                     force_basic_auth: true
                     user: "notMyUser"
@@ -109,46 +109,39 @@
                   register: result
                   failed_when: result.status != 200
                   ansible.builtin.uri:
-                    url: "https://127.0.0.1:{{ inv_install_haproxy_listen_stats_port }}/{{ inv_install_haproxy_listen_stats_uri }}"
+                    url: "https://127.0.0.1:{{ inv_install_haproxy__listen_stats_port }}/{{ inv_install_haproxy__listen_stats_uri }}"
                     method: "GET"
                     force_basic_auth: true
-                    user: "{{ inv_install_haproxy_stats_login }}"
-                    password: "{{ inv_install_haproxy_stats_password }}"
+                    user: "{{ inv_install_haproxy__stats_login }}"
+                    password: "{{ inv_install_haproxy__stats_password }}"
                     validate_certs: false
 
         - name: "Check HAProxy HTTP confs files"
-          when: inv_add_haproxy_http_confs_configurations | default(false)
-          loop: "{{ inv_add_haproxy_http_confs_configurations }}"
+          when: inv_add_haproxy_http_confs__configurations | default(false)
+          loop: "{{ inv_add_haproxy_http_confs__configurations }}"
           loop_control:
             loop_var: configuration
           register: file_check
           failed_when: not file_check.stat.exists
           ansible.builtin.stat:
-            path: "{{ inv_install_haproxy_confs_path }}/{{ configuration.name }}.cfg"
+            path: "{{ inv_install_haproxy__confs_path }}/{{ configuration.name }}.cfg"
 
         - name: "Check HAProxy BDD confs files"
-          when: inv_add_haproxy_bdd_confs_configurations | default(false)
-          loop: "{{ inv_add_haproxy_bdd_confs_configurations }}"
+          when: inv_add_haproxy_bdd_confs__configurations | default(false)
+          loop: "{{ inv_add_haproxy_bdd_confs__configurations }}"
           loop_control:
             loop_var: configuration
           register: file_check
           failed_when: not file_check.stat.exists
           ansible.builtin.stat:
-            path: "{{ inv_install_haproxy_confs_path }}/{{ configuration.name }}.cfg"
-
-# Don't forget to keep this file updated
-# molecule/<scenario>/verify.yml
-- name: "Verify APACHE2"
-  hosts: "all:&APACHE2"
-  gather_facts: false
-  tasks:
+            path: "{{ inv_install_haproxy__confs_path }}/{{ configuration.name }}.cfg"
 
     - name: "Verify APACHE2"
-      when: inv_install_haproxy | default(false)
+      when: inv_install_apache | default(false)
       block:
         - name: "Get Apache2 service current state"
-          register: install_apache_service_status
-          failed_when: not install_apache_service_status.status.ActiveState == 'active'
+          register: install_apache__service_status
+          failed_when: not install_apache__service_status.status.ActiveState == 'active'
           ansible.builtin.systemd:
             name: "apache2"
 
@@ -166,13 +159,13 @@
         - name: "Check Apache2 HTTP connectivity"
           ansible.builtin.wait_for:
             host: "{{ inventory_hostname }}"
-            port: "{{ inv_install_apache_http_listen_port }}"
+            port: "{{ inv_install_apache__http_listen_port }}"
             timeout: 120
 
         - name: "Check Apache2 HTTPS connectivity"
           ansible.builtin.wait_for:
             host: "{{ inventory_hostname }}"
-            port: "{{ inv_install_apache_https_listen_port }}"
+            port: "{{ inv_install_apache__https_listen_port }}"
             timeout: 120
 
         - name: "Get Apache2 service current state"
@@ -195,26 +188,26 @@
                 path: "{{ folder_path }}"
 
             - name: "Check Apache2 HTTP and conf"
-              loop: "{{ inv_add_apache_confs_configurations }}"
+              loop: "{{ inv_add_apache_confs__configurations }}"
               loop_control:
                 loop_var: vhost
               register: folder_check
               failed_when: not folder_check.stat.exists
               ansible.builtin.stat:
-                path: "{{ inv_add_apache_confs_confs_path }}/{{ vhost.server.name }}-HTTP.conf"
+                path: "{{ inv_add_apache_confs__confs_path }}/{{ vhost.server.name }}-HTTP.conf"
 
             - name: "Check Apache2 HTTPS and conf"
-              loop: "{{ inv_add_apache_confs_configurations }}"
+              loop: "{{ inv_add_apache_confs__configurations }}"
               loop_control:
                 loop_var: vhost
               register: folder_check
               when: vhost.ssl
               failed_when: not folder_check.stat.exists
               ansible.builtin.stat:
-                path: "{{ inv_add_apache_confs_confs_path }}/{{ vhost.server.name }}-HTTPS.conf"
+                path: "{{ inv_add_apache_confs__confs_path }}/{{ vhost.server.name }}-HTTPS.conf"
 
             - name: "Check HTTPS conf: certs"
-              loop: "{{ inv_add_apache_confs_configurations }}"
+              loop: "{{ inv_add_apache_confs__configurations }}"
               loop_control:
                 loop_var: vhost
               register: folder_check
@@ -224,7 +217,7 @@
                 path: "{{ vhost.ssl.crt }}"
 
             - name: "Check HTTPS conf: keys"
-              loop: "{{ inv_add_apache_confs_configurations }}"
+              loop: "{{ inv_add_apache_confs__configurations }}"
               loop_control:
                 loop_var: vhost
               register: folder_check
@@ -238,19 +231,19 @@
             - name: "Check Apache2 connectivity"
               ansible.builtin.wait_for:
                 host: "{{ inventory_hostname }}"
-                port: "{{ inv_add_apache_confs_http_listen_port }}"
+                port: "{{ inv_add_apache_confs__http_listen_port }}"
                 timeout: 120
 
             - name: "Check default vhost on HTTP"
               register: result
               failed_when: not (result.status != 200 or result.status == -1)
               ansible.builtin.uri:
-                url: "http://{{ inventory_hostname }}:{{ inv_add_apache_confs_http_listen_port }}/"
+                url: "http://{{ inventory_hostname }}:{{ inv_add_apache_confs__http_listen_port }}/"
                 method: "GET"
 
             - name: "Check default vhost on HTTPS"
               register: result
               failed_when: not (result.status != 200 or result.status == -1)
               ansible.builtin.uri:
-                url: "https://{{ inventory_hostname }}:{{ inv_add_apache_confs_https_listen_port }}/"
+                url: "https://{{ inventory_hostname }}:{{ inv_add_apache_confs__https_listen_port }}/"
                 method: "GET"
