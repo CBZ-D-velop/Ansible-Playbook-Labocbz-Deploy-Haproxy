@@ -31,7 +31,7 @@ This playbook simplifies the deployment process, making HAProxy and Apache2 conf
 
 ## Deployment diagramm
 
-![](./assets/Ansible-Playbook-Labocbz-Deploy-Haproxy.drawio.svg)
+![assets/Ansible-Playbook-Labocbz-Deploy-Haproxy](./assets/Ansible-Playbook-Labocbz-Deploy-Haproxy.drawio.svg)
 
 Here, we can observe a typical deployment of an SSL reverse proxy load balancer with enhanced security layers. The playbook can be utilized as follows: Deploying HAProxy as a load balancer for HTTP or database (BDD) / TCP services and deploying Apache2 as an SSL reverse proxy with additional security features like a Web Application Firewall (WAF), Quality of Service (QOS), LDAP integration, and more.
 
